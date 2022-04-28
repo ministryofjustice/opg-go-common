@@ -11,6 +11,8 @@ func Use(h http.Handler) http.HandlerFunc {
 		w.Header().Add("X-Content-Type-Options", "nosniff")
 		w.Header().Add("X-Frame-Options", "SAMEORIGIN")
 		w.Header().Add("X-XSS-Protection", "1; mode=block")
+		w.Header().Add("Cache-control", "no-store")
+		w.Header().Add("Pragma", "no-cache")
 
 		h.ServeHTTP(w, r)
 	}
