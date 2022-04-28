@@ -26,4 +26,6 @@ func TestSecurityHeaders(t *testing.T) {
 	assert.Equal("nosniff", resp.Header.Get("X-Content-Type-Options"))
 	assert.Equal("SAMEORIGIN", resp.Header.Get("X-Frame-Options"))
 	assert.Equal("1; mode=block", resp.Header.Get("X-XSS-Protection"))
+	assert.Equal("no-store", resp.Header.Get("Cache-control"))
+	assert.Equal("no-cache", resp.Header.Get("Pragma"))
 }
