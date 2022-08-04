@@ -19,7 +19,7 @@ func TestPrint(t *testing.T) {
 
 	logger.Print("one", "two", "three")
 
-	var v logEvent
+	var v LogEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -36,7 +36,7 @@ func TestRequest(t *testing.T) {
 
 	logger.Request(r, errors.New("what"))
 
-	var v requestEvent
+	var v LogEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -70,7 +70,7 @@ func TestRequestWithExpandedError(t *testing.T) {
 
 	logger.Request(r, err)
 
-	var v requestEvent
+	var v LogEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -79,4 +79,24 @@ func TestRequestWithExpandedError(t *testing.T) {
 	assert.Equal("/something", v.RequestURI)
 	assert.Equal(err.title, v.Message)
 	assert.Equal(err.data, v.Data)
+}
+
+func TestRequestWithNilError(t *testing.T) {
+	assert := assert.New(t)
+
+	var buf bytes.Buffer
+	logger := New(&buf, "hi")
+	r, _ := http.NewRequest("GET", "/something", nil)
+
+	logger.Request(r, nil)
+
+	var v LogEvent
+	assert.Nil(json.NewDecoder(&buf).Decode(&v))
+
+	assert.Equal("hi", v.ServiceName)
+	assert.WithinDuration(time.Now(), v.Timestamp, time.Second)
+	assert.Equal("GET", v.RequestMethod)
+	assert.Equal("/something", v.RequestURI)
+	assert.Equal("", v.Message)
+	assert.Nil(v.Data)
 }
