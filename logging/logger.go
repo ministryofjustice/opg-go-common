@@ -21,7 +21,7 @@ func New(out io.Writer, serviceName string) *Logger {
 	return &Logger{out: json.NewEncoder(out), serviceName: serviceName}
 }
 
-type LogEvent struct {
+type logEvent struct {
 	ServiceName   string      `json:"service_name"`
 	Timestamp     time.Time   `json:"timestamp"`
 	RequestMethod string      `json:"request_method,omitempty"`
@@ -36,7 +36,7 @@ func (l *Logger) Print(v ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	_ = l.out.Encode(LogEvent{
+	_ = l.out.Encode(logEvent{
 		ServiceName: l.serviceName,
 		Message:     fmt.Sprint(v...),
 		Timestamp:   now,
@@ -58,7 +58,7 @@ type ExpandedError interface {
 func (l *Logger) Request(r *http.Request, err error) {
 	now := time.Now()
 
-	event := LogEvent{
+	event := logEvent{
 		ServiceName:   l.serviceName,
 		RequestMethod: r.Method,
 		RequestURI:    r.URL.String(),

@@ -19,7 +19,7 @@ func TestPrint(t *testing.T) {
 
 	logger.Print("one", "two", "three")
 
-	var v LogEvent
+	var v logEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -36,7 +36,7 @@ func TestRequest(t *testing.T) {
 
 	logger.Request(r, errors.New("what"))
 
-	var v LogEvent
+	var v logEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -70,7 +70,7 @@ func TestRequestWithExpandedError(t *testing.T) {
 
 	logger.Request(r, err)
 
-	var v LogEvent
+	var v logEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
@@ -90,7 +90,7 @@ func TestRequestWithNilError(t *testing.T) {
 
 	logger.Request(r, nil)
 
-	var v LogEvent
+	var v logEvent
 	assert.Nil(json.NewDecoder(&buf).Decode(&v))
 
 	assert.Equal("hi", v.ServiceName)
