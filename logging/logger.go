@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -30,6 +31,13 @@ type logEvent struct {
 	Data          interface{} `json:"data,omitempty"`
 }
 
+type simpleLogEvent struct {
+	ServiceName   string    `json:"service_name"`
+	Timestamp     time.Time `json:"timestamp"`
+	RequestMethod string    `json:"request_method,omitempty"`
+	RequestURI    string    `json:"request_uri,omitempty"`
+}
+
 func (l *Logger) Print(v ...interface{}) {
 	now := time.Now()
 
@@ -40,6 +48,20 @@ func (l *Logger) Print(v ...interface{}) {
 		ServiceName: l.serviceName,
 		Message:     fmt.Sprint(v...),
 		Timestamp:   now,
+	})
+}
+
+func (l *Logger) SimplePrint(r *http.Request, err error) {
+	now := time.Now()
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	_ = l.out.Encode(simpleLogEvent{
+		ServiceName:   l.serviceName,
+		RequestMethod: r.Method,
+		RequestURI:    r.RequestURI,
+		Timestamp:     now,
 	})
 }
 
@@ -70,6 +92,21 @@ func (l *Logger) Request(r *http.Request, err error) {
 		event.Data = ee.Data()
 	} else if err != nil {
 		event.Message = err.Error()
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	_ = l.out.Encode(event)
+}
+
+func (l *Logger) Response(req *http.Request, resp *http.Response, err error) {
+
+	event := logEvent{
+		ServiceName:   l.serviceName,
+		RequestMethod: req.Method,
+		RequestURI:    req.URL.String(),
+		Timestamp:     time.Now(),
+		Message:       strconv.Itoa(resp.StatusCode),
 	}
 
 	l.mu.Lock()
