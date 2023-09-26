@@ -1,9 +1,13 @@
 package paginate
 
 import (
+	_ "embed"
 	"sort"
 	"strconv"
 )
+
+//go:embed template/pagination.gotmpl
+var Template string
 
 type Pagination struct {
 	CurrentPage     int
