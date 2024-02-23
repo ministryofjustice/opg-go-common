@@ -1,24 +1,44 @@
 package logging
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
-	"sync"
 	"time"
 )
 
+// A Logger writes information.
+//
+// Deprecated: Prefer log/slog instead (which is used as the implementation
+// here, if needed for an example of how it can be used).
 type Logger struct {
-	serviceName string
-
-	mu  sync.Mutex
-	out *json.Encoder
+	l *slog.Logger
 }
 
 func New(out io.Writer, serviceName string) *Logger {
-	return &Logger{out: json.NewEncoder(out), serviceName: serviceName}
+	logger := slog.New(slog.
+		NewJSONHandler(out, &slog.HandlerOptions{
+			ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+				if a.Key == "level" {
+					return slog.Attr{}
+				}
+
+				if a.Key == "time" {
+					a.Key = "timestamp"
+				}
+
+				if a.Key == "msg" {
+					a.Key = "message"
+				}
+
+				return a
+			},
+		}).
+		WithAttrs([]slog.Attr{slog.String("service_name", serviceName)}))
+
+	return &Logger{l: logger}
 }
 
 type logEvent struct {
@@ -31,20 +51,11 @@ type logEvent struct {
 }
 
 func (l *Logger) Print(v ...interface{}) {
-	now := time.Now()
-
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
-	_ = l.out.Encode(logEvent{
-		ServiceName: l.serviceName,
-		Message:     fmt.Sprint(v...),
-		Timestamp:   now,
-	})
+	l.l.Info(fmt.Sprint(v...))
 }
 
 func (l *Logger) Fatal(err error) {
-	l.Print(err)
+	l.l.Info(err.Error())
 	os.Exit(1)
 }
 
@@ -56,23 +67,18 @@ type ExpandedError interface {
 }
 
 func (l *Logger) Request(r *http.Request, err error) {
-	now := time.Now()
-
-	event := logEvent{
-		ServiceName:   l.serviceName,
-		RequestMethod: r.Method,
-		RequestURI:    r.URL.String(),
-		Timestamp:     now,
-	}
-
 	if ee, ok := err.(ExpandedError); ok {
-		event.Message = ee.Title()
-		event.Data = ee.Data()
+		l.l.Info(ee.Title(),
+			slog.String("request_method", r.Method),
+			slog.String("request_uri", r.URL.String()),
+			slog.Any("data", ee.Data()))
 	} else if err != nil {
-		event.Message = err.Error()
+		l.l.Info(err.Error(),
+			slog.String("request_method", r.Method),
+			slog.String("request_uri", r.URL.String()))
+	} else {
+		l.l.Info("",
+			slog.String("request_method", r.Method),
+			slog.String("request_uri", r.URL.String()))
 	}
-
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	_ = l.out.Encode(event)
 }
