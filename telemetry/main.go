@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -16,7 +17,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type contextKey string
+type loggerContextKey struct{}
 
 func NewLogger(serviceName string) *slog.Logger {
 	return slog.New(slog.
@@ -41,7 +42,7 @@ func NewLogger(serviceName string) *slog.Logger {
 		}))
 }
 
-func InitTracerProvider(ctx context.Context, logger *slog.Logger, exportTraces bool) (func(), error) {
+func StartTracerProvider(ctx context.Context, logger *slog.Logger, exportTraces bool) (func(), error) {
 	resource, err := ecs.NewResourceDetector().Detect(ctx)
 	if err != nil {
 		return nil, err
@@ -73,18 +74,16 @@ func InitTracerProvider(ctx context.Context, logger *slog.Logger, exportTraces b
 
 	return func() {
 		if err := tp.Shutdown(ctx); err != nil {
-			if err != nil {
-				logger.Error(err.Error())
-			}
+			logger.Error(fmt.Sprintf("tracer shutdown error: %s", err.Error()))
 		}
 	}, nil
 }
 
-func WithLogger(ctx context.Context, logger *slog.Logger) context.Context {
-	return context.WithValue(ctx, contextKey("logger"), logger)
+func ContextWithLogger(ctx context.Context, logger *slog.Logger) context.Context {
+	return context.WithValue(ctx, loggerContextKey{}, logger)
 }
 
-func AttachMiddleware(logger *slog.Logger) func(next http.Handler) http.Handler {
+func Middleware(logger *slog.Logger) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			span := oteltrace.SpanFromContext(r.Context())
@@ -98,13 +97,13 @@ func AttachMiddleware(logger *slog.Logger) func(next http.Handler) http.Handler 
 				slog.Any("request", r),
 			)
 
-			r = r.WithContext(WithLogger(r.Context(), loggerWithRequest))
+			r = r.WithContext(ContextWithLogger(r.Context(), loggerWithRequest))
 
 			next.ServeHTTP(w, r)
 		})
 	}
 }
 
-func GetLoggerFromContext(ctx context.Context) *slog.Logger {
-	return ctx.Value(contextKey("logger")).(*slog.Logger)
+func LoggerFromContext(ctx context.Context) *slog.Logger {
+	return ctx.Value(loggerContextKey{}).(*slog.Logger)
 }

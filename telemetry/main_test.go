@@ -63,9 +63,9 @@ func TestLoggerContextAttachment(t *testing.T) {
 	logger := slog.New(slog.NewJSONHandler(&buf, nil))
 	ctx := context.Background()
 
-	ctx2 := WithLogger(ctx, logger)
+	ctx2 := ContextWithLogger(ctx, logger)
 
-	logger2 := GetLoggerFromContext(ctx2)
+	logger2 := LoggerFromContext(ctx2)
 
 	assert.Equal(logger, logger2)
 }
@@ -76,10 +76,10 @@ func TestMiddlewareAddsLogContext(t *testing.T) {
 	buf := captureStdout(func() {
 		logger := NewLogger("test-middleware")
 
-		handler := AttachMiddleware(logger)
+		handler := Middleware(logger)
 
 		x := handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			l := GetLoggerFromContext(r.Context())
+			l := LoggerFromContext(r.Context())
 			l.Error("unhandled error")
 		}))
 
