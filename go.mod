@@ -3,7 +3,7 @@ module github.com/ministryofjustice/opg-go-common
 go 1.22
 
 require (
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/detectors/aws/ecs v1.24.0
 	go.opentelemetry.io/contrib/propagators/aws v1.24.0
 	go.opentelemetry.io/otel v1.24.0
