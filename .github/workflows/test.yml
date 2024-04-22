@@ -41,6 +41,8 @@ jobs:
 
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v1
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: /tmp/test-coverage.txt
           fail_ci_if_error: true
