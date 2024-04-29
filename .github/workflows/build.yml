@@ -69,7 +69,6 @@ jobs:
             echo BRANCH_NAME=${{ github.head_ref }} >> $GITHUB_ENV
           fi
         id: extract_branch
-      - uses: unfor19/install-aws-cli-action@v1
 
       - name: Bump version
         if: github.actor != 'dependabot[bot]'
