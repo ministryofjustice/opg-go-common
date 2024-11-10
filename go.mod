@@ -1,16 +1,18 @@
 module github.com/ministryofjustice/opg-go-common
 
-go 1.22
+go 1.22.7
+
+toolchain go1.23.3
 
 require (
 	github.com/stretchr/testify v1.9.0
-	go.opentelemetry.io/contrib/detectors/aws/ecs v1.30.0
-	go.opentelemetry.io/contrib/propagators/aws v1.30.0
+	go.opentelemetry.io/contrib/detectors/aws/ecs v1.31.0
+	go.opentelemetry.io/contrib/propagators/aws v1.31.0
 	go.opentelemetry.io/otel v1.31.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.31.0
 	go.opentelemetry.io/otel/sdk v1.31.0
 	go.opentelemetry.io/otel/trace v1.31.0
-	google.golang.org/grpc v1.67.1
+	google.golang.org/grpc v1.68.0
 )
 
 require (
