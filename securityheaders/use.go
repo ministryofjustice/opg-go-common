@@ -5,7 +5,7 @@ import "net/http"
 // Use applies common security headers to a handler.
 func Use(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Security-Policy", "default-src 'self'")
+		w.Header().Add("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; connect-src 'self'; font-src 'self'; frame-ancestors 'none';")
 		w.Header().Add("Referrer-Policy", "same-origin")
 		w.Header().Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
 		w.Header().Add("X-Content-Type-Options", "nosniff")
