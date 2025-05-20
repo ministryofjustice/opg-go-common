@@ -20,7 +20,7 @@ func TestSecurityHeaders(t *testing.T) {
 
 	resp := w.Result()
 
-	assert.Equal("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; connect-src 'self'; font-src 'self'; frame-ancestors 'none';", resp.Header.Get("Content-Security-Policy"))
+	assert.Equal("default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content;", resp.Header.Get("Content-Security-Policy"))
 	assert.Equal("same-origin", resp.Header.Get("Referrer-Policy"))
 	assert.Equal("max-age=31536000; includeSubDomains; preload", resp.Header.Get("Strict-Transport-Security"))
 	assert.Equal("nosniff", resp.Header.Get("X-Content-Type-Options"))
