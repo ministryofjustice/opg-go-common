@@ -1,8 +1,6 @@
 module github.com/ministryofjustice/opg-go-common
 
-go 1.23.0
-
-toolchain go1.24.3
+go 1.24.3
 
 require (
 	github.com/stretchr/testify v1.10.0
@@ -17,7 +15,6 @@ require (
 
 require (
 	github.com/brunoscheufler/aws-ecs-metadata-go v0.0.0-20221221133751-67e37ae746cd // indirect
-	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
