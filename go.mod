@@ -4,13 +4,13 @@ go 1.24.3
 
 require (
 	github.com/stretchr/testify v1.11.1
-	go.opentelemetry.io/contrib/detectors/aws/ecs v1.37.0
-	go.opentelemetry.io/contrib/propagators/aws v1.37.0
+	go.opentelemetry.io/contrib/detectors/aws/ecs v1.38.0
+	go.opentelemetry.io/contrib/propagators/aws v1.38.0
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	go.opentelemetry.io/otel/trace v1.38.0
-	google.golang.org/grpc v1.75.0
+	google.golang.org/grpc v1.76.0
 )
 
 require (
