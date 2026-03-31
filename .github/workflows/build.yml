@@ -33,15 +33,11 @@ jobs:
         run: |
           go mod download
 
-      - name: Setup gotestsum
-        uses: autero1/action-gotestsum@7263b9d73912eec65f46337689e59fac865c425f # v2.0.0
-        with:
-          gotestsum_version: 1.6.4
       - run: mkdir -p /tmp/test-results
 
       - name: Run Tests
         run: |
-          gotestsum --junitfile /tmp/test-results/unit-tests.xml -- ./... -coverprofile=/tmp/test-coverage.txt
+          go tool gotestsum --junitfile /tmp/test-results/unit-tests.xml -- ./... -coverprofile=/tmp/test-coverage.txt
 
       - name: Upload Code Coverage
         uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5.5.4
