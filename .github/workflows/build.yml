@@ -60,7 +60,7 @@ jobs:
           fetch-tags: true
 
       - name: Bump version and push tag
-        if: github.actor != 'dependabot[bot]'
+        if: ${{ github.ref == 'refs/heads/main' }}
         id: bump_version
         uses: ministryofjustice/opg-github-actions/actions/semver@a2907c7c7be94301c965ace76a2cfa407ad6fc88 # v4.6.0
         with:
