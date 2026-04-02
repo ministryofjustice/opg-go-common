@@ -65,7 +65,7 @@ jobs:
         uses: ministryofjustice/opg-github-actions/actions/semver@a2907c7c7be94301c965ace76a2cfa407ad6fc88 # v4.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
+          prerelease: false
           create_release: false
           default_bump: minor
           without_prefix: false        
