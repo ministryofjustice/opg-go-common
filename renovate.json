@@ -23,13 +23,13 @@
         "minor",
         "patch"
       ],
-      "stabilityDays": 3,
+      "stabilityDays": 7,
       "prPriority": 4
     }
   ],
   "major": {
     "automerge": false,
-    "stabilityDays": 3,
+    "stabilityDays": 7,
     "prPriority": 0
   },
   "vulnerabilityAlerts": {
