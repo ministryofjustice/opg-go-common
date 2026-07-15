@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: '1.26'
 
@@ -62,7 +62,7 @@ jobs:
       - name: Bump version and push tag
         if: ${{ github.ref == 'refs/heads/main' }}
         id: bump_version
-        uses: ministryofjustice/opg-github-actions/actions/semver@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
+        uses: ministryofjustice/opg-github-actions/actions/semver@939ca6ddfc2bafefa48b0730ea0268bd75a25876 # v4.9.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
