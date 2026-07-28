@@ -17,7 +17,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: '1.26'
@@ -54,7 +54,7 @@ jobs:
       branch: ${{ steps.set-outputs.outputs.branch }}
       tag: ${{ steps.bump_version.outputs.tag }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: "0"
           fetch-tags: true
@@ -62,7 +62,7 @@ jobs:
       - name: Bump version and push tag
         if: ${{ github.ref == 'refs/heads/main' }}
         id: bump_version
-        uses: ministryofjustice/opg-github-actions/actions/semver@939ca6ddfc2bafefa48b0730ea0268bd75a25876 # v4.9.1
+        uses: ministryofjustice/opg-github-actions/actions/semver@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
