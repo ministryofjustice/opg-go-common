@@ -31,6 +31,7 @@ func captureStdout(cb func()) bytes.Buffer {
 
 func TestNewLogger(t *testing.T) {
 	assert := assert.New(t)
+	t.Setenv("LOG_LEVEL", "INFO")
 
 	buf := captureStdout(func() {
 		logger := NewLogger("test-logger")
@@ -54,6 +55,37 @@ func TestNewLogger(t *testing.T) {
 	assert.Equal("test-logger", obj.ServiceName)
 	assert.Equal("GET", obj.Request.Method)
 	assert.Equal("/test-url", obj.Request.Path)
+}
+
+func TestNewLoggerDebugLogsDisabledAtInfoLevel(t *testing.T) {
+	assert := assert.New(t)
+	t.Setenv("LOG_LEVEL", "INFO")
+
+	buf := captureStdout(func() {
+		logger := NewLogger("test-logger")
+		logger.Debug("debug message")
+	})
+
+	assert.Equal("", buf.String())
+}
+
+func TestNewLoggerDebugLogsEnabledAtDebugLevel(t *testing.T) {
+	assert := assert.New(t)
+	t.Setenv("LOG_LEVEL", "DEBUG")
+
+	buf := captureStdout(func() {
+		logger := NewLogger("test-logger")
+		logger.Debug("debug message")
+	})
+
+	var obj struct {
+		Level string `json:"level"`
+		Msg   string `json:"msg"`
+	}
+
+	json.Unmarshal(buf.Bytes(), &obj)
+	assert.Equal("DEBUG", obj.Level)
+	assert.Equal("debug message", obj.Msg)
 }
 
 func TestLoggerContextAttachment(t *testing.T) {
