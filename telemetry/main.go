@@ -6,7 +6,9 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/ministryofjustice/opg-go-common/env"
 	"go.opentelemetry.io/contrib/detectors/aws/ecs"
 	"go.opentelemetry.io/contrib/propagators/aws/xray"
 	"go.opentelemetry.io/otel"
@@ -20,8 +22,11 @@ import (
 type loggerContextKey struct{}
 
 func NewLogger(serviceName string) *slog.Logger {
+	logLevel := parseLogLevel(env.Get("LOG_LEVEL", "INFO"))
+
 	return slog.New(slog.
 		NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: logLevel,
 			ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
 
 				switch a.Value.Kind() {
@@ -40,6 +45,19 @@ func NewLogger(serviceName string) *slog.Logger {
 		WithAttrs([]slog.Attr{
 			slog.String("service_name", serviceName),
 		}))
+}
+
+func parseLogLevel(logLevel string) slog.Level {
+	switch strings.ToUpper(logLevel) {
+	case "DEBUG":
+		return slog.LevelDebug
+	case "WARN":
+		return slog.LevelWarn
+	case "ERROR":
+		return slog.LevelError
+	default:
+		return slog.LevelInfo
+	}
 }
 
 func StartTracerProvider(ctx context.Context, logger *slog.Logger, exportTraces bool) (func(), error) {
