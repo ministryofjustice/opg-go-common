@@ -62,7 +62,7 @@ jobs:
       - name: Bump version and push tag
         if: ${{ github.ref == 'refs/heads/main' }}
         id: bump_version
-        uses: ministryofjustice/opg-github-actions/actions/semver@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        uses: ministryofjustice/opg-github-actions/actions/semver@e8b6e80d440613671b8d6f87b5e52a5363cc974a # v5.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
